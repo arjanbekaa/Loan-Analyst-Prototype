@@ -1,6 +1,8 @@
 # Loan Analyst Prototype
 
-Loan Analyst Prototype is a local end-to-end internal operations system built with **Unity, Node.js, Python, and n8n**. It simulates a role-based loan review workflow where staff users can log in, review applicants, run automated risk analysis, and approve cases through secured backend actions.
+Independent personal prototype built to explore how an internal lending workflow platform could be structured using Unity, Node.js, Python, and n8n.
+
+This project simulates a role-based loan review system where staff users can authenticate, review applicants, run automated risk analysis, and approve cases through secured backend actions.
 
 ## Tech Stack
 
@@ -16,7 +18,7 @@ Loan Analyst Prototype is a local end-to-end internal operations system built wi
 - Applicant dashboard and detail flow  
 - Automated loan risk analysis  
 - Manager-only approval actions  
-- n8n webhook automation after approval  
+- n8n webhook notification flow  
 
 ## Architecture
 
@@ -27,14 +29,15 @@ Unity Client
 Node.js API Backend  
 → n8n Webhook Workflow  
 
-## Demo Flow
+## Demo
 
-1. Login as Reviewer or Manager  
-2. View applicants  
-3. Open applicant details  
-4. Run automated analysis  
-5. Approve as Manager  
-6. Trigger workflow automation  
+YouTube walkthrough included in repository sharing materials.
+
+## Notes
+
+- This is a local prototype focused on architecture demonstration.
+- Uses mock in-memory data for applicants and demo users.
+- Authentication and users are simplified for prototype purposes.
 
 ## Local Setup
 
