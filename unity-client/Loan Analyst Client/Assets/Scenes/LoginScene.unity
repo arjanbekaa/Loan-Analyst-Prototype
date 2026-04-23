@@ -4005,11 +4005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abc588a902eba554a8f99b9fc2312662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoanAnalyst.Client.Controllers.LoginController
-  usernameInput: {fileID: 559290021}
-  passwordInput: {fileID: 77157207}
-  loginButton: {fileID: 266615093}
-  errorText: {fileID: 1311954479}
-  statusText: {fileID: 1519161105}
+  loginView: {fileID: 307339039}
 --- !u!4 &1996674728
 Transform:
   m_ObjectHideFlags: 0

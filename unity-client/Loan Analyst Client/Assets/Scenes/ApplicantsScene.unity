@@ -340,7 +340,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40.95
+  m_fontSize: 37.65
   m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1639,14 +1639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63349353d5e87754c89926f7731992b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoanAnalyst.Client.Controllers.ApplicantsController
-  applicantsListView: {fileID: 1330649844}
-  headerText: {fileID: 1175385058}
-  statusText: {fileID: 606628928}
-  errorText: {fileID: 1600053603}
-  refreshButton: {fileID: 797095753}
-  logoutButton: {fileID: 724534167}
-  listContent: {fileID: 2098426900}
-  applicantRowTemplate: {fileID: 857600647}
+  applicantsListView: {fileID: 1330649843}
 --- !u!4 &960542649
 Transform:
   m_ObjectHideFlags: 0
@@ -2192,7 +2185,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 27.75
+  m_fontSize: 28.75
   m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2337,7 +2330,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 23.45
+  m_fontSize: 21.55
   m_fontSizeBase: 18
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2838,6 +2831,8 @@ MonoBehaviour:
   contentRoot: {fileID: 2098426900}
   emptyStateText: {fileID: 1011786907}
   itemTemplate: {fileID: 857600649}
+  statusText: {fileID: 606628928}
+  errorText: {fileID: 1600053603}
 --- !u!114 &1330649844
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1572,10 +1572,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoanAnalyst.UI.Views.ApplicantDetailsView
   backButton: {fileID: 1918198319}
   applicantNameText: {fileID: 974322322}
+  statusBadgeBackground: {fileID: 637328647}
   statusText: {fileID: 1965306234}
   incomeText: {fileID: 217507006}
   debtText: {fileID: 1223769537}
   requestedAmountText: {fileID: 595147380}
+  refreshButton: {fileID: 1237769358}
   analyzeButton: {fileID: 206137384}
   approveButton: {fileID: 803848914}
   riskScoreText: {fileID: 1907489933}

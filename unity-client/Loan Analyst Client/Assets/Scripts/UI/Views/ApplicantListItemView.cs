@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace LoanAnalyst.UI.Views
@@ -17,14 +18,90 @@ namespace LoanAnalyst.UI.Views
 
         #endregion
 
-        #region Properties
+        private Color _defaultStatusBadgeColor;
+        private Color _defaultStatusTextColor;
 
-        public TextMeshProUGUI ApplicantNameText => applicantNameText;
-        public TextMeshProUGUI RequestedAmountText => requestedAmountText;
-        public TextMeshProUGUI StatusBadgeText => statusBadgeText;
+        public string ApplicantName
+        {
+            get => GetText(applicantNameText);
+            set => SetText(applicantNameText, value);
+        }
+
+        public string RequestedAmount
+        {
+            get => GetText(requestedAmountText);
+            set => SetText(requestedAmountText, value);
+        }
+
+        public string StatusBadge
+        {
+            get => GetText(statusBadgeText);
+            set
+            {
+                SetText(statusBadgeText, value);
+                ApplyStatusTheme(value);
+            }
+        }
+
         public Image StatusBadgeBackground => statusBadgeBackground;
-        public Button OpenDetailsButton => openDetailsButton;
 
-        #endregion
+        public void BindOpenDetailsAction(UnityAction action)
+        {
+            if (openDetailsButton == null)
+            {
+                return;
+            }
+
+            openDetailsButton.onClick.RemoveAllListeners();
+            if (action != null)
+            {
+                openDetailsButton.onClick.AddListener(action);
+            }
+        }
+
+        private void Awake()
+        {
+            _defaultStatusBadgeColor = statusBadgeBackground != null
+                ? statusBadgeBackground.color
+                : Color.white;
+            _defaultStatusTextColor = statusBadgeText != null
+                ? statusBadgeText.color
+                : Color.white;
+        }
+
+        private void ApplyStatusTheme(string value)
+        {
+            var normalized = value?.Trim().ToLowerInvariant();
+
+            if (statusBadgeBackground != null)
+            {
+                statusBadgeBackground.color = normalized switch
+                {
+                    "approved" => new Color(0.18f, 0.62f, 0.31f, 1f),
+                    "rejected" => new Color(0.74f, 0.25f, 0.25f, 1f),
+                    _ => _defaultStatusBadgeColor,
+                };
+            }
+
+            if (statusBadgeText != null)
+            {
+                statusBadgeText.color = normalized == "approved"
+                    ? Color.white
+                    : _defaultStatusTextColor;
+            }
+        }
+
+        private static string GetText(TMP_Text text)
+        {
+            return text != null ? text.text : string.Empty;
+        }
+
+        private static void SetText(TMP_Text text, string value)
+        {
+            if (text != null)
+            {
+                text.text = value ?? string.Empty;
+            }
+        }
     }
 }

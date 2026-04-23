@@ -1,9 +1,8 @@
 using LoanAnalyst.Client.Core;
 using LoanAnalyst.Client.Services;
-using TMPro;
+using LoanAnalyst.UI.Views;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -12,11 +11,7 @@ namespace LoanAnalyst.Client.Controllers
 {
     public class LoginController : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField usernameInput;
-        [SerializeField] private TMP_InputField passwordInput;
-        [SerializeField] private Button loginButton;
-        [SerializeField] private TextMeshProUGUI errorText;
-        [SerializeField] private TextMeshProUGUI statusText;
+        [SerializeField] private LoginView loginView;
 
         private AuthService _authService;
         private bool _isLoggingIn;
@@ -24,15 +19,25 @@ namespace LoanAnalyst.Client.Controllers
         private void Awake()
         {
             _authService = new AuthService(new ApiClient());
+            if (loginView == null)
+            {
+                loginView = FindAnyObjectByType<LoginView>(FindObjectsInactive.Include);
+            }
         }
 
         private void Start()
         {
+            if (loginView == null)
+            {
+                Debug.LogError("LoginView is not assigned.");
+                return;
+            }
+
             UserSession.Clear();
             SetError(string.Empty);
             SetStatus($"API: {ApiConfig.BaseUrl}");
-            loginButton.onClick.AddListener(OnLoginClicked);
-            FocusInput(usernameInput);
+            loginView.BindLoginAction(OnLoginClicked);
+            loginView.FocusUsername();
         }
 
         private void Update()
@@ -46,7 +51,14 @@ namespace LoanAnalyst.Client.Controllers
 
             if (keyboard.tabKey.wasPressedThisFrame)
             {
-                FocusInput(usernameInput != null && usernameInput.isFocused ? passwordInput : usernameInput);
+                if (loginView.IsUsernameFocused)
+                {
+                    loginView.FocusPassword();
+                }
+                else
+                {
+                    loginView.FocusUsername();
+                }
             }
 
             if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame)
@@ -66,8 +78,8 @@ namespace LoanAnalyst.Client.Controllers
             SetError(string.Empty);
             SetStatus("Logging in...");
 
-            var username = usernameInput.text?.Trim();
-            var password = passwordInput.text;
+            var username = loginView.Username;
+            var password = loginView.Password;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -77,7 +89,7 @@ namespace LoanAnalyst.Client.Controllers
             }
 
             _isLoggingIn = true;
-            loginButton.interactable = false;
+            loginView.LoginInteractable = false;
             try
             {
                 var response = await _authService.LoginAsync(username, password);
@@ -102,35 +114,18 @@ namespace LoanAnalyst.Client.Controllers
             finally
             {
                 _isLoggingIn = false;
-                loginButton.interactable = true;
+                loginView.LoginInteractable = true;
             }
-        }
-
-        private static void FocusInput(TMP_InputField input)
-        {
-            if (input == null)
-            {
-                return;
-            }
-
-            input.Select();
-            input.ActivateInputField();
         }
 
         private void SetError(string value)
         {
-            if (errorText != null)
-            {
-                errorText.text = value;
-            }
+            loginView.ErrorMessage = value;
         }
 
         private void SetStatus(string value)
         {
-            if (statusText != null)
-            {
-                statusText.text = value;
-            }
+            loginView.StatusMessage = value;
         }
     }
 }
