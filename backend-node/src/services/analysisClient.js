@@ -1,7 +1,7 @@
-const ANALYSIS_BASE_URL = process.env.ANALYSIS_BASE_URL || "http://127.0.0.1:8000";
+const { config } = require("../config/env");
 
 async function analyzeWithPython(payload) {
-  const response = await fetch(`${ANALYSIS_BASE_URL}/analyze`, {
+  const response = await fetch(`${config.analysisBaseUrl}/analyze`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

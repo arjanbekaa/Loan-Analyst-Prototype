@@ -1639,6 +1639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63349353d5e87754c89926f7731992b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoanAnalyst.Client.Controllers.ApplicantsController
+  applicantsListView: {fileID: 1330649844}
   headerText: {fileID: 1175385058}
   statusText: {fileID: 606628928}
   errorText: {fileID: 1600053603}

@@ -56,17 +56,21 @@ router.post(
       return res.status(404).json({ message: "Applicant not found" });
     }
 
-    if(applicant.decision === "approved") {
+    if(applicant.status === "approved" || applicant.decision === "approved") {
       return res.status(400).json({ message: "Applicant already approved" });
     }
 
-    applicant.status = "approved";
-    applicant.aprovedAt = new Date().toISOString();
-    applicant.aprovedBy = {
+    const approvedAt = new Date().toISOString();
+    const approvedBy = {
       id: req.user.id,
       username: req.user.username,
       role: req.user.role,
     };
+
+    applicant.status = "approved";
+    applicant.decision = "approved";
+    applicant.approvedAt = approvedAt;
+    applicant.approvedBy = approvedBy;
 
     try {
       await sendApprovalEvent({
@@ -74,8 +78,8 @@ router.post(
         applicantId: applicant.id,
         applicantName: applicant.fullName,
         status: applicant.status,
-        approvedAt: applicant.approvedAt,
-        approvedBy: applicant.approvedBy,
+        approvedAt,
+        approvedBy,
       });
     } catch (err) {
       return res.status(502).json({

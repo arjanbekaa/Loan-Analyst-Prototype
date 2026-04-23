@@ -1,8 +1,9 @@
 require("dotenv").config();
+const { config, validateEnv } = require("./config/env");
 const app = require("./app");
 
-const PORT = process.env.PORT || 4000;
+validateEnv();
 
-app.listen(PORT, () => {
-    console.log(`Backend running on http://localhost:${PORT}`);
+app.listen(config.port, () => {
+    console.log(`Backend running on http://localhost:${config.port}`);
 });

@@ -11,7 +11,7 @@ namespace LoanAnalyst.Client.Controllers
 {
     public class ApplicantsController : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI headerText;
+        [SerializeField] private ApplicantsListView applicantsListView;
         [SerializeField] private TextMeshProUGUI statusText;
         [SerializeField] private TextMeshProUGUI errorText;
         [SerializeField] private Button refreshButton;
@@ -24,6 +24,7 @@ namespace LoanAnalyst.Client.Controllers
         private void Awake()
         {
             _applicantService = new ApplicantService(new ApiClient());
+            BindViewReferences();
         }
 
         private async void Start()
@@ -34,12 +35,24 @@ namespace LoanAnalyst.Client.Controllers
                 return;
             }
 
-            headerText.text = $"Operator: {UserSession.DisplayName} ({UserSession.NormalizedRole})";
+            if (applicantsListView?.RoleText != null)
+            {
+                applicantsListView.RoleText.text = $"Signed in as: {UserSession.DisplayName} ({UserSession.NormalizedRole})";
+            }
+
+            SetEmptyState(false, string.Empty);
             SetStatus("Loading applicants...");
             SetError(string.Empty);
 
-            refreshButton.onClick.AddListener(OnRefreshClicked);
-            logoutButton.onClick.AddListener(OnLogoutClicked);
+            if (refreshButton != null)
+            {
+                refreshButton.onClick.AddListener(OnRefreshClicked);
+            }
+
+            if (logoutButton != null)
+            {
+                logoutButton.onClick.AddListener(OnLogoutClicked);
+            }
 
             await LoadApplicantsAsync();
         }
@@ -58,7 +71,11 @@ namespace LoanAnalyst.Client.Controllers
 
         private async System.Threading.Tasks.Task LoadApplicantsAsync()
         {
-            refreshButton.interactable = false;
+            if (refreshButton != null)
+            {
+                refreshButton.interactable = false;
+            }
+
             SetError(string.Empty);
             SetStatus("Loading applicants...");
 
@@ -71,9 +88,12 @@ namespace LoanAnalyst.Client.Controllers
                 if (applicants == null || applicants.Length == 0)
                 {
                     SetStatus(string.Empty);
-                    SetError("No applicants available.");
+                    SetError(string.Empty);
+                    SetEmptyState(true, "No applicants available. Refresh to load the queue.");
                     return;
                 }
+
+                SetEmptyState(false, string.Empty);
 
                 foreach (var applicant in applicants)
                 {
@@ -94,12 +114,50 @@ namespace LoanAnalyst.Client.Controllers
             }
             finally
             {
-                refreshButton.interactable = true;
+                if (refreshButton != null)
+                {
+                    refreshButton.interactable = true;
+                }
             }
         }
 
         private void AddApplicantRow(ApplicantDto applicant)
         {
+            var itemTemplate = applicantsListView?.ItemTemplate;
+            if (itemTemplate != null && listContent != null)
+            {
+                var rowView = Instantiate(itemTemplate, listContent);
+                rowView.gameObject.SetActive(true);
+
+                if (rowView.ApplicantNameText != null)
+                {
+                    rowView.ApplicantNameText.text = applicant.fullName;
+                }
+
+                if (rowView.RequestedAmountText != null)
+                {
+                    rowView.RequestedAmountText.text = FormatCurrency(applicant.requestedAmount);
+                }
+
+                if (rowView.StatusBadgeText != null)
+                {
+                    rowView.StatusBadgeText.text = FormatStatus(applicant.status);
+                }
+
+                if (rowView.OpenDetailsButton != null)
+                {
+                    rowView.OpenDetailsButton.onClick.RemoveAllListeners();
+                    rowView.OpenDetailsButton.onClick.AddListener(() => OpenApplicant(applicant.id));
+                }
+
+                return;
+            }
+
+            if (applicantRowTemplate == null || listContent == null)
+            {
+                return;
+            }
+
             var row = Instantiate(applicantRowTemplate, listContent);
             row.gameObject.SetActive(true);
 
@@ -107,8 +165,8 @@ namespace LoanAnalyst.Client.Controllers
             if (itemView != null)
             {
                 itemView.ApplicantNameText.text = applicant.fullName;
-                itemView.RequestedAmountText.text = $"Requested: {applicant.requestedAmount}";
-                itemView.StatusBadgeText.text = string.IsNullOrWhiteSpace(applicant.status) ? "UNKNOWN" : applicant.status.ToUpperInvariant();
+                itemView.RequestedAmountText.text = FormatCurrency(applicant.requestedAmount);
+                itemView.StatusBadgeText.text = FormatStatus(applicant.status);
                 itemView.OpenDetailsButton.onClick.RemoveAllListeners();
                 itemView.OpenDetailsButton.onClick.AddListener(() => OpenApplicant(applicant.id));
             }
@@ -133,15 +191,61 @@ namespace LoanAnalyst.Client.Controllers
 
         private void ClearList()
         {
+            if (listContent == null)
+            {
+                return;
+            }
+
+            var itemTemplateTransform = applicantsListView?.ItemTemplate != null
+                ? applicantsListView.ItemTemplate.transform
+                : null;
+            var buttonTemplateTransform = applicantRowTemplate != null
+                ? applicantRowTemplate.transform
+                : null;
+
             for (var i = listContent.childCount - 1; i >= 0; i--)
             {
                 var child = listContent.GetChild(i);
-                if (child == applicantRowTemplate.transform)
+                if (child == itemTemplateTransform || child == buttonTemplateTransform)
                 {
                     continue;
                 }
                 Destroy(child.gameObject);
             }
+        }
+
+        private void BindViewReferences()
+        {
+            if (applicantsListView == null)
+            {
+                applicantsListView = FindAnyObjectByType<ApplicantsListView>(FindObjectsInactive.Include);
+            }
+
+            if (applicantsListView == null)
+            {
+                return;
+            }
+
+            refreshButton = applicantsListView.RefreshButton != null
+                ? applicantsListView.RefreshButton
+                : refreshButton;
+            logoutButton = applicantsListView.LogoutButton != null
+                ? applicantsListView.LogoutButton
+                : logoutButton;
+            listContent = applicantsListView.ContentRoot != null
+                ? applicantsListView.ContentRoot
+                : listContent;
+        }
+
+        private void SetEmptyState(bool isVisible, string value)
+        {
+            if (applicantsListView?.EmptyStateText == null)
+            {
+                return;
+            }
+
+            applicantsListView.EmptyStateText.gameObject.SetActive(isVisible);
+            applicantsListView.EmptyStateText.text = value;
         }
 
         private void SetError(string value)
@@ -158,6 +262,18 @@ namespace LoanAnalyst.Client.Controllers
             {
                 statusText.text = "Status: " + value;
             }
+        }
+
+        private static string FormatStatus(string value)
+        {
+            return string.IsNullOrWhiteSpace(value)
+                ? "UNKNOWN"
+                : value.Trim().ToUpperInvariant();
+        }
+
+        private static string FormatCurrency(float value)
+        {
+            return $"Requested: ${value:N0}";
         }
     }
 }

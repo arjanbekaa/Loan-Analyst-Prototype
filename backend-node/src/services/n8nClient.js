@@ -1,11 +1,7 @@
-const N8N_APPROVAL_WEBHOOK_URL = process.env.N8N_APPROVAL_WEBHOOK_URL;
+const { config } = require("../config/env");
 
 async function sendApprovalEvent(payload){
-    if(!N8N_APPROVAL_WEBHOOK_URL) {
-        throw new Error("N8N_APPROVAL_WEBHOOK_URL is not defined");
-    }
-
-    const response = await fetch(N8N_APPROVAL_WEBHOOK_URL, {
+    const response = await fetch(config.n8nApprovalWebhookUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

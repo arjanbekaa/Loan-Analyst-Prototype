@@ -17,14 +17,11 @@ namespace LoanAnalyst.UI.Views
         [Header("Financial Summary")]
         [SerializeField] private TextMeshProUGUI incomeText;
         [SerializeField] private TextMeshProUGUI debtText;
-        [SerializeField] private TextMeshProUGUI employmentYearsText;
-        [SerializeField] private TextMeshProUGUI missedPaymentsText;
         [SerializeField] private TextMeshProUGUI requestedAmountText;
 
         [Header("Actions")]
         [SerializeField] private Button analyzeButton;
         [SerializeField] private Button approveButton;
-        [SerializeField] private Button rejectOrEscalateButton;
 
         [Header("AI Results")]
         [SerializeField] private TextMeshProUGUI riskScoreText;
@@ -45,12 +42,9 @@ namespace LoanAnalyst.UI.Views
         public TextMeshProUGUI StatusText => statusText;
         public TextMeshProUGUI IncomeText => incomeText;
         public TextMeshProUGUI DebtText => debtText;
-        public TextMeshProUGUI EmploymentYearsText => employmentYearsText;
-        public TextMeshProUGUI MissedPaymentsText => missedPaymentsText;
         public TextMeshProUGUI RequestedAmountText => requestedAmountText;
         public Button AnalyzeButton => analyzeButton;
         public Button ApproveButton => approveButton;
-        public Button RejectOrEscalateButton => rejectOrEscalateButton;
         public TextMeshProUGUI RiskScoreText => riskScoreText;
         public TextMeshProUGUI RiskLevelText => riskLevelText;
         public TextMeshProUGUI SummaryText => summaryText;

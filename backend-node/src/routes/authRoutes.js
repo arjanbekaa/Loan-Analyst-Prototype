@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const { config } = require("../config/env");
 const { users } = require("../data/users");
 
 const router = express.Router();
@@ -20,9 +21,9 @@ router.post("/login", (req, res) => {
   }
 
   const token = jwt.sign(
-    { sub: user.id, username: user.username, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+    { sub: user.id, id: user.id, username: user.username, role: user.role },
+    config.jwtSecret,
+    { expiresIn: config.jwtExpiresIn }
   );
 
   return res.status(200).json({

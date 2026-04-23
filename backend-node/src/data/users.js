@@ -1,3 +1,5 @@
+// Local-only demo auth store for the prototype.
+// Plain-text credentials are intentional mock data and must not be reused in production.
 const users = [
   {
     id: "u1",

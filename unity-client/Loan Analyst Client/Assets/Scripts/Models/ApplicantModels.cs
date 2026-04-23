@@ -37,10 +37,17 @@ namespace LoanAnalyst.Client.Models
     public class AnalyzeResponse
     {
         public string applicantId;
-        public float riskScore;
-        public string recommendation;
-        public string reason;
-        public string modelVersion;
+        public int riskScore;
+        public string riskLevel;
+        public string[] reasons;
+        public AnalysisMetricDto metric;
+    }
+
+    [Serializable]
+    public class AnalysisMetricDto
+    {
+        public float dti;
+        public float estimatedMonthlyPayment;
     }
 
     [Serializable]
@@ -68,10 +75,8 @@ namespace LoanAnalyst.Client.Models
         public float monthlyIncome;
         public int creditScore;
         public string status;
+        public string decision;
         public string approvedAt;
         public ApproveBy approvedBy;
-        // Backend currently has a typo in key name: aprovedAt/aprovedBy.
-        public string aprovedAt;
-        public ApproveBy aprovedBy;
     }
 }
