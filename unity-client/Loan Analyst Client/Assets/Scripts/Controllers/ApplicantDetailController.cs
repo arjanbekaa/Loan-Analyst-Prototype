@@ -66,8 +66,8 @@ namespace LoanAnalyst.Client.Controllers
                 return;
             }
 
-            applicantDetailsView.ApproveVisible = true;
-            applicantDetailsView.ApproveInteractable = UserSession.IsManager;
+            applicantDetailsView.ApproveVisible = UserSession.IsManager;
+            applicantDetailsView.ApproveInteractable = UserSession.IsManager && !IsApproved(_currentApplicant);
 
             if (!UserSession.IsManager)
             {
@@ -172,7 +172,7 @@ namespace LoanAnalyst.Client.Controllers
             }
             finally
             {
-                applicantDetailsView.ApproveInteractable = UserSession.IsManager;
+                applicantDetailsView.ApproveInteractable = UserSession.IsManager && !IsApproved(_currentApplicant);
             }
         }
 
@@ -225,6 +225,7 @@ namespace LoanAnalyst.Client.Controllers
             applicantDetailsView.Income = FormatCurrency(applicant.monthlyIncome);
             applicantDetailsView.Debt = FormatCurrency(applicant.monthlyDebtPayments);
             applicantDetailsView.RequestedAmount = FormatCurrency(applicant.requestedAmount);
+            applicantDetailsView.ApproveInteractable = UserSession.IsManager && !IsApproved(applicant);
         }
 
         private void RenderAnalysis(AnalyzeResponse result, string reasonsText, string dtiText, string monthlyPaymentText)
@@ -257,13 +258,26 @@ namespace LoanAnalyst.Client.Controllers
 
         private static string BuildRecommendedAction(string riskLevel)
         {
-            return riskLevel switch
+            var normalized = riskLevel?.Trim().ToUpperInvariant();
+
+            return normalized switch
             {
                 "LOW" => "Recommend approval.",
                 "MEDIUM" => "Recommend manual review.",
                 "HIGH" => "Recommend escalation or rejection.",
                 _ => "No recommendation available.",
             };
+        }
+
+        private static bool IsApproved(ApplicantDto applicant)
+        {
+            if (applicant == null)
+            {
+                return false;
+            }
+
+            return string.Equals(applicant.status, "approved", System.StringComparison.OrdinalIgnoreCase)
+                || string.Equals(applicant.decision, "approved", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private void SetError(string value)
